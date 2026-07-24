@@ -4,8 +4,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 // ── Web3Forms endpoint ─────────────────────────────────────────────────────────
 
 const WEB3FORMS_URL = "https://api.web3forms.com/submit";
-// PLACEHOLDER_WEB3FORMS_KEY — owner must replace with their actual key:
-const WEB3FORMS_ACCESS_KEY = "PLACEHOLDER_WEB3FORMS_KEY";
+const WEB3FORMS_ACCESS_KEY = "f44df011-f43d-4202-910a-27ef6434f84f";
 
 // ── Route ──────────────────────────────────────────────────────────────────────
 
