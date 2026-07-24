@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@layer base {
+  html,
+  body {
+    @apply bg-stone-50 text-stone-900 antialiased;
+  }
+}
+
+/* ── Swiper overrides: earthy palette ─────────────────────────────────────── */
+
+.gallery-swiper {
+  --swiper-navigation-color: #92400e; /* amber-800 */
+  --swiper-pagination-color: #92400e;
+  --swiper-pagination-bullet-inactive-color: #d6d3d1; /* stone-300 */
+  --swiper-pagination-bullet-inactive-opacity: 0.6;
+}
+
+.gallery-swiper .swiper-button-next,
+.gallery-swiper .swiper-button-prev {
+  background: rgb(255 255 255 / 0.85);
+  backdrop-filter: blur(4px);
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+}
+
+.gallery-swiper .swiper-button-next::after,
+.gallery-swiper .swiper-button-prev::after {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.gallery-swiper .swiper-pagination {
+  bottom: 1rem !important;
+}
+
+/* ── Plyr overrides: earthy palette ───────────────────────────────────────── */
+
+:root {
+  --plyr-color-main: #92400e;
+  --plyr-video-control-background-hover: #78350f; /* amber-900 */
+  --plyr-menu-background: #fafaf9; /* stone-50 */
+  --plyr-menu-color: #44403c; /* stone-700 */
+}
+
+.plyr--video {
+  border-radius: 0.75rem 0.75rem 0 0;
+}
