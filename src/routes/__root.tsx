@@ -7,7 +7,7 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Jo Furniture's — Handcrafted Furniture" },
+      { title: "Jo's Furniture — Handcrafted Furniture" },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
   }),
@@ -32,7 +32,7 @@ function NavBar() {
           to="/"
           className="font-serif text-xl font-bold tracking-tight text-stone-900 hover:text-amber-700 transition"
         >
-          Jo Furniture's
+          Jo's Furniture
         </Link>
         <ul className="flex items-center gap-8 text-sm font-medium">
           <li>

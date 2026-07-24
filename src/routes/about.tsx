@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 import siteConfig from "../../site.json";
 
-const businessName = siteConfig.businessName?.trim() || "Jo Furniture's";
+const businessName = siteConfig.businessName?.trim() || "Jo's Furniture";
 
 // ── Value cards data ────────────────────────────────────────────────────────
 
@@ -100,7 +100,7 @@ export const Route = createFileRoute("/about")({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "About — Jo Furniture's" },
+      { title: "About — Jo's Furniture" },
     ],
   }),
   component: About,
@@ -150,7 +150,7 @@ function About() {
             </div>
             <div className="md:w-3/5">
               <h3 className="font-serif text-2xl font-bold text-stone-900 sm:text-3xl">
-                Meet JoAn Repuela
+                Meet JoAn
               </h3>
               <p className="mt-1 text-sm text-amber-700 font-medium">
                 Founder &amp; Lead Craftsman
@@ -198,7 +198,7 @@ function About() {
             <div className="md:w-2/5 shrink-0">
               <img
                 src="https://picsum.photos/seed/workshop/800/1000"
-                alt="The Jo Furniture's workshop"
+                alt="The Jo's Furniture workshop"
                 className="w-full rounded-xl object-cover shadow-sm md:aspect-[3/4]"
                 loading="lazy"
               />
@@ -285,6 +285,15 @@ function About() {
         >
           Get in Touch
         </Link>
+        <p className="mt-6 text-sm text-stone-500">
+          Email:{" "}
+          <a
+            href="mailto:repuelaj3@gmail.com"
+            className="font-medium text-amber-700 underline underline-offset-4 hover:text-amber-800"
+          >
+            repuelaj3@gmail.com
+          </a>
+        </p>
       </section>
     </main>
   );

@@ -15,7 +15,7 @@ function Home() {
         Handcrafted Furniture
       </span>
       <h1 className="max-w-2xl text-4xl font-bold tracking-tight sm:text-6xl">
-        {businessName || "Jo Furniture's"}
+        {businessName || "Jo's Furniture"}
       </h1>
       <p className="max-w-md text-lg text-gray-600">
         {businessName

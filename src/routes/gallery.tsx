@@ -13,7 +13,7 @@ import "plyr/dist/plyr.css";
 
 // ── Business name ────────────────────────────────────────────────────────────
 
-const businessName = siteConfig.businessName?.trim() || "Jo Furniture's";
+const businessName = siteConfig.businessName?.trim() || "Jo's Furniture";
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 
@@ -176,7 +176,7 @@ export const Route = createFileRoute("/gallery")({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Gallery — Jo Furniture's" },
+      { title: "Gallery — Jo's Furniture" },
     ],
   }),
   component: Gallery,

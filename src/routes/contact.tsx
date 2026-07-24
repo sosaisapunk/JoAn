@@ -13,7 +13,7 @@ export const Route = createFileRoute("/contact")({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Contact — Jo Furniture's" },
+      { title: "Contact — Jo's Furniture" },
     ],
   }),
   validateSearch: (search: Record<string, unknown>) => ({
@@ -165,7 +165,7 @@ function Contact() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           access_key: WEB3FORMS_ACCESS_KEY,
-          subject: "New Inquiry from Jo Furniture's",
+          subject: "New Inquiry from Jo's Furniture — Custom Furniture Commission Request",
           name: name.trim(),
           email: email.trim(),
           phone: phone.trim(),
@@ -228,6 +228,15 @@ function Contact() {
               gallery
             </Link>
             .
+          </p>
+          <p className="mx-auto mt-4 max-w-lg text-sm text-stone-500">
+            Or email us directly:{" "}
+            <a
+              href="mailto:repuelaj3@gmail.com"
+              className="font-medium text-amber-700 underline underline-offset-4 hover:text-amber-800"
+            >
+              repuelaj3@gmail.com
+            </a>
           </p>
           <Link
             to="/gallery"
@@ -492,6 +501,15 @@ function Contact() {
                 </button>
                 <p className="mt-3 text-center text-xs text-stone-400">
                   We'll get back to you within 2–3 business days.
+                </p>
+                <p className="mt-2 text-center text-xs text-stone-400">
+                  Or email us directly:{" "}
+                  <a
+                    href="mailto:repuelaj3@gmail.com"
+                    className="font-medium text-amber-700 hover:text-amber-800"
+                  >
+                    repuelaj3@gmail.com
+                  </a>
                 </p>
               </div>
             </form>
