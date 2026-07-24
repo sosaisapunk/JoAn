@@ -1,19 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
-import { readFile } from "node:fs/promises";
 
-// ── Server helpers ──────────────────────────────────────────────────────────
+import siteConfig from "../../site.json";
 
-const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
-  try {
-    const cfg = JSON.parse(await readFile("site.json", "utf8")) as {
-      businessName?: string;
-    };
-    return cfg.businessName?.trim() ?? "Jo Furniture's";
-  } catch {
-    return "Jo Furniture's";
-  }
-});
+const businessName = siteConfig.businessName?.trim() || "Jo Furniture's";
 
 // ── Value cards data ────────────────────────────────────────────────────────
 
@@ -114,15 +103,12 @@ export const Route = createFileRoute("/about")({
       { title: "About — Jo Furniture's" },
     ],
   }),
-  loader: () => getBusinessName(),
   component: About,
 });
 
 // ── Page component ───────────────────────────────────────────────────────────
 
 function About() {
-  const businessName = Route.useLoaderData();
-
   return (
     <main className="min-h-dvh bg-stone-50">
       {/* ── Hero ─────────────────────────────────────────────────────────── */}

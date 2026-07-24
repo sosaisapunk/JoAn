@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
-# Rebuild the site and (re)start the production server on port 3000.
+# Rebuild the static site and (re)start vite preview on port 3000.
 # Build runs in the foreground so errors surface; the server is launched in a new
 # session (setsid) so it keeps running after this script — and your shell — exits.
-# serve.ts frees the port (across user boundaries, retrying on races) before
-# binding, so this is safe to re-run no matter who started the current server.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -11,15 +9,22 @@ cd "$(dirname "$0")"
 umask 002
 mkdir -p .run
 
-# The workspace starts as sources only (the coming-soon placeholder serves from
-# the image's pre-built copy), so the first publish installs deps here. No-op
-# once node_modules is current.
+# Install deps if needed
 bun install
-bun run build
-setsid nohup bun run start > .run/server.log 2>&1 < /dev/null &
 
-# Wait for the new server to actually answer before reporting success, so a
-# startup crash surfaces here instead of silently leaving the old page live.
+# Build static output to dist-static/
+bun run build
+
+# Copy .htaccess into the build output
+cp .htaccess dist-static/.htaccess
+
+# Free port 3000 regardless of who owns the current listener
+sudo sh -c 'for _ in $(seq 1 25); do pids=$(lsof -t -iTCP:3000 -sTCP:LISTEN 2>/dev/null || true); if [ -z "$pids" ]; then exit 0; fi; kill $pids 2>/dev/null || true; sleep 0.2; done'
+
+# Serve static files with SPA fallback on port 3000
+setsid nohup bun x vite preview --port 3000 --host 0.0.0.0 --outDir dist-static > .run/server.log 2>&1 < /dev/null &
+
+# Wait for the server to actually answer before reporting success
 for _ in $(seq 1 50); do
   if curl -sf -o /dev/null http://localhost:3000; then
     echo "site published; serving on port 3000"

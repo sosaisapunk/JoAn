@@ -1,11 +1,4 @@
-import {
-  HeadContent,
-  Link,
-  Outlet,
-  Scripts,
-  createRootRoute,
-} from "@tanstack/react-router";
-import type { ReactNode } from "react";
+import { Link, Outlet, createRootRoute } from "@tanstack/react-router";
 
 import appCss from "~/styles/app.css?url";
 
@@ -24,10 +17,10 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   return (
-    <RootDocument>
+    <>
       <NavBar />
       <Outlet />
-    </RootDocument>
+    </>
   );
 }
 
@@ -69,19 +62,5 @@ function NavBar() {
         </ul>
       </div>
     </nav>
-  );
-}
-
-function RootDocument({ children }: { children: ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body className="bg-stone-50 text-stone-900 antialiased">
-        {children}
-        <Scripts />
-      </body>
-    </html>
   );
 }

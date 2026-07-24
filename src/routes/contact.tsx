@@ -1,64 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
-import { readFile, writeFile } from "node:fs/promises";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 
-// ── Types ──────────────────────────────────────────────────────────────────────
+// ── Web3Forms endpoint ─────────────────────────────────────────────────────────
 
-interface InquiryData {
-  name: string;
-  email: string;
-  phone: string;
-  description: string;
-  reference: string;
-  budget: string;
-  timeline: string;
-}
-
-interface Inquiry extends InquiryData {
-  timestamp: string;
-}
-
-// ── Server function ────────────────────────────────────────────────────────────
-
-const submitInquiry = createServerFn({ method: "POST" })
-  .validator((data: unknown) => {
-    const d = data as InquiryData;
-    const errors: string[] = [];
-    if (!d.name?.trim()) errors.push("Name is required");
-    if (!d.email?.trim()) errors.push("Email is required");
-    if (!d.description?.trim()) errors.push("Description is required");
-    if (errors.length > 0) throw new Error(errors.join("; "));
-    return d;
-  })
-  .handler(async ({ data }) => {
-    const filePath = "/home/team/shared/inquiries.json";
-    let inquiries: Inquiry[] = [];
-
-    try {
-      const raw = await readFile(filePath, "utf8");
-      inquiries = JSON.parse(raw);
-      if (!Array.isArray(inquiries)) inquiries = [];
-    } catch {
-      inquiries = [];
-    }
-
-    const entry: Inquiry = {
-      name: data.name.trim(),
-      email: data.email.trim(),
-      phone: data.phone.trim(),
-      description: data.description.trim(),
-      reference: data.reference.trim(),
-      budget: data.budget,
-      timeline: data.timeline,
-      timestamp: new Date().toISOString(),
-    };
-
-    inquiries.push(entry);
-    await writeFile(filePath, JSON.stringify(inquiries, null, 2));
-
-    return { success: true };
-  });
+const WEB3FORMS_URL = "https://api.web3forms.com/submit";
+// PLACEHOLDER_WEB3FORMS_KEY — owner must replace with their actual key:
+const WEB3FORMS_ACCESS_KEY = "PLACEHOLDER_WEB3FORMS_KEY";
 
 // ── Route ──────────────────────────────────────────────────────────────────────
 
@@ -214,8 +161,12 @@ function Contact() {
     setErrorMessage("");
 
     try {
-      await submitInquiry({
-        data: {
+      const res = await fetch(WEB3FORMS_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          subject: "New Inquiry from Jo Furniture's",
           name: name.trim(),
           email: email.trim(),
           phone: phone.trim(),
@@ -223,8 +174,18 @@ function Contact() {
           reference: reference.trim(),
           budget,
           timeline,
-        },
+          redirect: false,
+        }),
       });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(
+          (body as { message?: string }).message ||
+            `Web3Forms returned HTTP ${res.status}`,
+        );
+      }
+
       setStatus("success");
     } catch (err) {
       setStatus("error");

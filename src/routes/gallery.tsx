@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
-import { readFile } from "node:fs/promises";
 import { useEffect, useRef } from "react";
+
+import siteConfig from "../../site.json";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Thumbs } from "swiper/modules";
 import type Plyr from "plyr";
@@ -11,18 +11,9 @@ import "swiper/css/pagination";
 import "swiper/css/thumbs";
 import "plyr/dist/plyr.css";
 
-// ── Server helpers ──────────────────────────────────────────────────────────
+// ── Business name ────────────────────────────────────────────────────────────
 
-const getBusinessName = createServerFn({ method: "GET" }).handler(async () => {
-  try {
-    const cfg = JSON.parse(await readFile("site.json", "utf8")) as {
-      businessName?: string;
-    };
-    return cfg.businessName?.trim() ?? "Jo Furniture's";
-  } catch {
-    return "Jo Furniture's";
-  }
-});
+const businessName = siteConfig.businessName?.trim() || "Jo Furniture's";
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 
@@ -188,15 +179,12 @@ export const Route = createFileRoute("/gallery")({
       { title: "Gallery — Jo Furniture's" },
     ],
   }),
-  loader: () => getBusinessName(),
   component: Gallery,
 });
 
 // ── Page component ───────────────────────────────────────────────────────────
 
 function Gallery() {
-  const businessName = Route.useLoaderData();
-
   return (
     <main className="min-h-dvh bg-stone-50">
       {/* ── Hero ─────────────────────────────────────────────────────── */}
