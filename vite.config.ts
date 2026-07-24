@@ -5,7 +5,7 @@ import tsConfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   appType: "spa",
-  base: "/JoAn/",
+  base: "./",
   server: {
     port: 3000,
     host: true,

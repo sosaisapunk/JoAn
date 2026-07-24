@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 
 import siteConfig from "../../site.json";
@@ -199,12 +199,12 @@ function Gallery() {
         <p className="mx-auto mt-6 max-w-lg text-stone-600 leading-relaxed">
           Every piece we build is made to order in our workshop. Browse the
           gallery to see past commissions, then{" "}
-          <a
-            href="/contact"
+          <Link
+            to="/contact"
             className="font-medium text-amber-700 underline underline-offset-4 hover:text-amber-800"
           >
             get in touch
-          </a>{" "}
+          </Link>{" "}
           to start your own.
         </p>
       </section>
@@ -252,13 +252,14 @@ function Gallery() {
                       <p className="mt-3 leading-relaxed text-stone-600">
                         {item.description}
                       </p>
-                      <a
-                        href={`/contact?ref=${encodeURIComponent(item.title)}`}
+                      <Link
+                        to="/contact"
+                        search={{ ref: item.title }}
                         className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-amber-700 hover:text-amber-800"
                       >
                         Inquire about this piece
                         <span aria-hidden="true">→</span>
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </SwiperSlide>
@@ -310,12 +311,12 @@ function Gallery() {
           Tell us what you have in mind — dimensions, wood species, style
           references — and we'll craft something unique for your home.
         </p>
-        <a
-          href="/contact"
+        <Link
+          to="/contact"
           className="mt-8 inline-block rounded-full bg-amber-700 px-8 py-3 font-medium text-white transition hover:bg-amber-800"
         >
           Start Your Inquiry
-        </a>
+        </Link>
       </section>
     </main>
   );

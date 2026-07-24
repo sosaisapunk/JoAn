@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 
 // ── Web3Forms endpoint ─────────────────────────────────────────────────────────
@@ -221,20 +221,20 @@ function Contact() {
           <p className="mx-auto mt-6 max-w-lg text-stone-600 leading-relaxed">
             We'll be in touch within 2–3 business days to discuss your piece.
             In the meantime, feel free to browse more of our work in the{" "}
-            <a
-              href="/gallery"
+            <Link
+              to="/gallery"
               className="font-medium text-amber-700 underline underline-offset-4 hover:text-amber-800"
             >
               gallery
-            </a>
+            </Link>
             .
           </p>
-          <a
-            href="/gallery"
+          <Link
+            to="/gallery"
             className="mt-8 inline-block rounded-full bg-amber-700 px-8 py-3 font-medium text-white transition hover:bg-amber-800"
           >
             Back to Gallery
-          </a>
+          </Link>
         </section>
       </main>
     );

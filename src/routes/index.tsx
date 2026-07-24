@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
 // Business name is imported from site.json at build time — no server needed.
 import siteConfig from "../../site.json";
@@ -23,18 +23,18 @@ function Home() {
           : "Custom, handcrafted furniture built to last generations."}
       </p>
       <div className="mt-4 flex gap-4">
-        <a
-          href="/gallery"
+        <Link
+          to="/gallery"
           className="rounded-full bg-amber-700 px-6 py-2.5 font-medium text-white transition hover:bg-amber-800"
         >
           View Gallery
-        </a>
-        <a
-          href="/contact"
+        </Link>
+        <Link
+          to="/contact"
           className="rounded-full border border-amber-700 px-6 py-2.5 font-medium text-amber-700 transition hover:bg-amber-50"
         >
           Get in Touch
-        </a>
+        </Link>
       </div>
       <footer className="absolute bottom-6 text-sm text-gray-400">
         Built with{" "}

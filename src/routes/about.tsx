@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
 import siteConfig from "../../site.json";
 
@@ -279,12 +279,12 @@ function About() {
           Every project begins with a conversation. Tell us what you're
           dreaming up — we'd love to build it with you.
         </p>
-        <a
-          href="/contact"
+        <Link
+          to="/contact"
           className="mt-8 inline-block rounded-full bg-amber-700 px-8 py-3 font-medium text-white transition hover:bg-amber-800"
         >
           Get in Touch
-        </a>
+        </Link>
       </section>
     </main>
   );
