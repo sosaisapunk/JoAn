@@ -173,7 +173,7 @@ function Contact() {
           reference: reference.trim(),
           budget,
           timeline,
-          redirect: false,
+          redirect: "./thank-you",
         }),
       });
 
@@ -185,7 +185,8 @@ function Contact() {
         );
       }
 
-      setStatus("success");
+      // Navigate to thank-you page on success
+      window.location.href = "./thank-you";
     } catch (err) {
       setStatus("error");
       setErrorMessage(
