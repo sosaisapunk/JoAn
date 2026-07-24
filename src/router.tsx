@@ -6,6 +6,7 @@ export function getRouter() {
   return createRouter({
     routeTree,
 
+    basepath: '/JoAn',
     defaultPreload: "intent",
     scrollRestoration: true,
     defaultNotFoundComponent: () => <p>Not found</p>,
