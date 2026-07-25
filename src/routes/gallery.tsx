@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import siteConfig from "../../site.json";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -15,112 +15,21 @@ import "plyr/dist/plyr.css";
 
 const businessName = siteConfig.businessName?.trim() || "Jo's Furniture";
 
-// ── Data ─────────────────────────────────────────────────────────────────────
+// ── Types ────────────────────────────────────────────────────────────────────
 
-interface GalleryItem {
-  id: number;
-  title: string;
-  description: string;
-  image: string;
+interface MediaItem {
+  file: string;
+  name: string;
 }
 
-const galleryItems: GalleryItem[] = [
-  {
-    id: 1,
-    title: "Walnut Dining Table",
-    description:
-      "Solid black walnut with hand-rubbed oil finish. Seats eight comfortably.",
-    image: "https://picsum.photos/seed/furniture1/1200/800",
-  },
-  {
-    id: 2,
-    title: "Oak Bookshelf",
-    description:
-      "Floor-to-ceiling white oak with adjustable shelves and hidden cable routing.",
-    image: "https://picsum.photos/seed/furniture2/1200/800",
-  },
-  {
-    id: 3,
-    title: "Maple Coffee Table",
-    description:
-      "Live-edge maple slab with hairpin steel legs. One of a kind.",
-    image: "https://picsum.photos/seed/furniture3/1200/800",
-  },
-  {
-    id: 4,
-    title: "Cherry Wood Desk",
-    description:
-      "Writing desk in American cherry with dovetailed drawers and leather inlay.",
-    image: "https://picsum.photos/seed/furniture4/1200/800",
-  },
-  {
-    id: 5,
-    title: "Rustic Pine Bench",
-    description:
-      "Reclaimed heart pine with mortise-and-tenon joinery. Built to last generations.",
-    image: "https://picsum.photos/seed/furniture5/1200/800",
-  },
-  {
-    id: 6,
-    title: "Mahogany Sideboard",
-    description:
-      "Honduran mahogany with brass hardware. Four cabinets, two felt-lined drawers.",
-    image: "https://picsum.photos/seed/furniture6/1200/800",
-  },
-  {
-    id: 7,
-    title: "Ash Bed Frame",
-    description:
-      "Quarter-sawn ash with floating nightstands. Available in all standard sizes.",
-    image: "https://picsum.photos/seed/furniture7/1200/800",
-  },
-  {
-    id: 8,
-    title: "Teak Outdoor Set",
-    description:
-      "Plantation teak, weather-resistant joinery. Table, two benches, and two chairs.",
-    image: "https://picsum.photos/seed/furniture8/1200/800",
-  },
-];
-
-interface VideoItem {
-  id: number;
-  title: string;
-  description: string;
-  src: string;
-  poster: string;
+interface MediaData {
+  photos: MediaItem[];
+  videos: MediaItem[];
 }
-
-const videoItems: VideoItem[] = [
-  {
-    id: 1,
-    title: "Crafting a Walnut Dining Table",
-    description:
-      "Watch the process: from rough lumber to the finished piece in our workshop.",
-    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-    poster: "https://picsum.photos/seed/video1/1280/720",
-  },
-  {
-    id: 2,
-    title: "Joinery Techniques",
-    description:
-      "A closer look at the dovetail and mortise-and-tenon joints we use.",
-    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-    poster: "https://picsum.photos/seed/video2/1280/720",
-  },
-  {
-    id: 3,
-    title: "Finishing Touches",
-    description:
-      "Hand-rubbed oil finishes and the final inspection before delivery.",
-    src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-    poster: "https://picsum.photos/seed/video3/1280/720",
-  },
-];
 
 // ── Video player component ───────────────────────────────────────────────────
 
-function PlyrVideo({ src, poster }: { src: string; poster: string }) {
+function PlyrVideo({ src, poster }: { src: string; poster?: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const playerRef = useRef<Plyr | null>(null);
 
@@ -128,7 +37,6 @@ function PlyrVideo({ src, poster }: { src: string; poster: string }) {
     let cancelled = false;
 
     async function init() {
-      // Dynamic import so Plyr only loads on the client (it accesses `document` at init)
       const PlyrModule = await import("plyr");
       const PlyrClass = PlyrModule.default;
 
@@ -163,9 +71,38 @@ function PlyrVideo({ src, poster }: { src: string; poster: string }) {
 
   return (
     <video ref={videoRef} poster={poster} playsInline>
-      <source src={src} type="video/mp4" />
-      {/* PLACEHOLDER: Replace src above with real video URLs */}
+      <source src={src} type={`video/${src.split(".").pop()}`} />
     </video>
+  );
+}
+
+// ── Skeleton components ──────────────────────────────────────────────────────
+
+function PhotoSkeleton() {
+  return (
+    <div className="md:flex">
+      <div className="md:w-3/5">
+        <div className="h-64 w-full animate-pulse bg-stone-200 sm:h-80 md:h-[28rem]" />
+      </div>
+      <div className="flex flex-col justify-center px-6 py-8 md:w-2/5 md:px-10">
+        <div className="mb-3 h-3 w-8 animate-pulse rounded bg-stone-200" />
+        <div className="mb-2 h-7 w-48 animate-pulse rounded bg-stone-200" />
+        <div className="mb-4 h-4 w-full animate-pulse rounded bg-stone-100" />
+        <div className="h-4 w-40 animate-pulse rounded bg-stone-100" />
+      </div>
+    </div>
+  );
+}
+
+function VideoSkeleton() {
+  return (
+    <div className="overflow-hidden rounded-xl border border-stone-200 bg-white shadow-sm">
+      <div className="aspect-video animate-pulse bg-stone-200" />
+      <div className="px-5 py-4">
+        <div className="mb-2 h-5 w-36 animate-pulse rounded bg-stone-200" />
+        <div className="h-4 w-full animate-pulse rounded bg-stone-100" />
+      </div>
+    </div>
   );
 }
 
@@ -176,7 +113,7 @@ export const Route = createFileRoute("/gallery")({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Gallery — Jo's Furniture" },
+      { title: `Gallery — ${businessName}` },
     ],
   }),
   component: Gallery,
@@ -185,6 +122,43 @@ export const Route = createFileRoute("/gallery")({
 // ── Page component ───────────────────────────────────────────────────────────
 
 function Gallery() {
+  const [media, setMedia] = useState<MediaData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchMedia() {
+      try {
+        const resp = await fetch("./media.php");
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data: MediaData = await resp.json();
+        if (!cancelled) {
+          setMedia(data);
+          setLoading(false);
+        }
+      } catch {
+        if (!cancelled) {
+          setError(true);
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchMedia();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const photos = media?.photos ?? [];
+  const videos = media?.videos ?? [];
+  const hasPhotos = photos.length > 0;
+  const hasVideos = videos.length > 0;
+  const isEmpty = !loading && !error && !hasPhotos && !hasVideos;
+
   return (
     <main className="min-h-dvh bg-stone-50">
       {/* ── Hero ─────────────────────────────────────────────────────── */}
@@ -209,98 +183,153 @@ function Gallery() {
         </p>
       </section>
 
-      {/* ── Photo Gallery ────────────────────────────────────────────── */}
-      <section className="px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-10 flex items-center gap-4">
-            <div className="h-px flex-1 bg-stone-300" />
-            <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-stone-500">
-              Photo Gallery
-            </h2>
-            <div className="h-px flex-1 bg-stone-300" />
+      {/* ── Error state ──────────────────────────────────────────────── */}
+      {error && (
+        <section className="px-4 py-16 text-center sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-md rounded-xl border border-red-200 bg-red-50 px-6 py-8">
+            <p className="font-medium text-red-700">
+              Couldn't load the gallery.
+            </p>
+            <p className="mt-2 text-sm text-red-600">
+              Please try refreshing the page. If the problem persists,{" "}
+              <Link
+                to="/contact"
+                className="underline underline-offset-4 hover:text-red-700"
+              >
+                contact us
+              </Link>{" "}
+              and we'll help you out.
+            </p>
           </div>
+        </section>
+      )}
 
-          {/* PLACEHOLDER: Replace galleryItems array above with real photos & descriptions */}
-          <div className="relative rounded-xl border border-stone-200 bg-white shadow-sm">
-            <Swiper
-              modules={[Navigation, Pagination, Thumbs]}
-              navigation
-              pagination={{ clickable: true }}
-              spaceBetween={0}
-              slidesPerView={1}
-              loop
-              className="gallery-swiper"
-            >
-              {galleryItems.map((item) => (
-                <SwiperSlide key={item.id}>
-                  <div className="md:flex">
-                    <div className="md:w-3/5">
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="h-64 w-full object-cover sm:h-80 md:h-[28rem]"
-                        loading="lazy"
-                      />
-                    </div>
-                    <div className="flex flex-col justify-center px-6 py-8 md:w-2/5 md:px-10">
-                      <p className="font-mono text-xs uppercase tracking-[0.2em] text-amber-700">
-                        {String(item.id).padStart(2, "0")}
-                      </p>
-                      <h3 className="mt-2 font-serif text-2xl font-bold text-stone-900">
-                        {item.title}
-                      </h3>
-                      <p className="mt-3 leading-relaxed text-stone-600">
-                        {item.description}
-                      </p>
-                      <Link
-                        to="/contact"
-                        search={{ ref: item.title }}
-                        className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-amber-700 hover:text-amber-800"
-                      >
-                        Inquire about this piece
-                        <span aria-hidden="true">→</span>
-                      </Link>
-                    </div>
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
+      {/* ── Empty state ──────────────────────────────────────────────── */}
+      {isEmpty && (
+        <section className="px-4 py-24 text-center sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-md">
+            <p className="font-serif text-2xl font-bold text-stone-700">
+              Gallery coming soon
+            </p>
+            <p className="mt-3 leading-relaxed text-stone-500">
+              We're preparing photos and videos of our latest work. Check back
+              shortly — or{" "}
+              <Link
+                to="/contact"
+                className="font-medium text-amber-700 underline underline-offset-4 hover:text-amber-800"
+              >
+                get in touch
+              </Link>{" "}
+              now to discuss your project.
+            </p>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {/* ── Photo Gallery ────────────────────────────────────────────── */}
+      {(loading || hasPhotos) && (
+        <section className="px-4 py-16 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-5xl">
+            <div className="mb-10 flex items-center gap-4">
+              <div className="h-px flex-1 bg-stone-300" />
+              <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-stone-500">
+                Photo Gallery
+              </h2>
+              <div className="h-px flex-1 bg-stone-300" />
+            </div>
+
+            <div className="relative rounded-xl border border-stone-200 bg-white shadow-sm">
+              {loading ? (
+                <PhotoSkeleton />
+              ) : (
+                <Swiper
+                  modules={[Navigation, Pagination, Thumbs]}
+                  navigation
+                  pagination={{ clickable: true }}
+                  spaceBetween={0}
+                  slidesPerView={1}
+                  loop
+                  className="gallery-swiper"
+                >
+                  {photos.map((item, idx) => (
+                    <SwiperSlide key={idx}>
+                      <div className="md:flex">
+                        <div className="md:w-3/5">
+                          <img
+                            src={item.file}
+                            alt={item.name}
+                            className="h-64 w-full object-cover sm:h-80 md:h-[28rem]"
+                            loading="lazy"
+                          />
+                        </div>
+                        <div className="flex flex-col justify-center px-6 py-8 md:w-2/5 md:px-10">
+                          <p className="font-mono text-xs uppercase tracking-[0.2em] text-amber-700">
+                            {String(idx + 1).padStart(2, "0")}
+                          </p>
+                          <h3 className="mt-2 font-serif text-2xl font-bold text-stone-900">
+                            {item.name}
+                          </h3>
+                          <p className="mt-3 leading-relaxed text-stone-600">
+                            Handcrafted in our workshop. Each piece is made to
+                            order with meticulous attention to detail.
+                          </p>
+                          <Link
+                            to="/contact"
+                            search={{ ref: item.name }}
+                            className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-amber-700 hover:text-amber-800"
+                          >
+                            Inquire about this piece
+                            <span aria-hidden="true">→</span>
+                          </Link>
+                        </div>
+                      </div>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── Video Gallery ────────────────────────────────────────────── */}
-      <section className="px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-10 flex items-center gap-4">
-            <div className="h-px flex-1 bg-stone-300" />
-            <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-stone-500">
-              From the Workshop
-            </h2>
-            <div className="h-px flex-1 bg-stone-300" />
-          </div>
+      {(loading || hasVideos) && (
+        <section className="px-4 py-16 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-5xl">
+            <div className="mb-10 flex items-center gap-4">
+              <div className="h-px flex-1 bg-stone-300" />
+              <h2 className="font-mono text-xs uppercase tracking-[0.25em] text-stone-500">
+                From the Workshop
+              </h2>
+              <div className="h-px flex-1 bg-stone-300" />
+            </div>
 
-          {/* PLACEHOLDER: Replace videoItems array above with real video URLs */}
-          <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-            {videoItems.map((video) => (
-              <div
-                key={video.id}
-                className="overflow-hidden rounded-xl border border-stone-200 bg-white shadow-sm"
-              >
-                <PlyrVideo src={video.src} poster={video.poster} />
-                <div className="px-5 py-4">
-                  <h3 className="font-serif text-lg font-semibold text-stone-900">
-                    {video.title}
-                  </h3>
-                  <p className="mt-1 text-sm leading-relaxed text-stone-500">
-                    {video.description}
-                  </p>
-                </div>
-              </div>
-            ))}
+            <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+              {loading
+                ? Array.from({ length: 3 }).map((_, i) => (
+                    <VideoSkeleton key={i} />
+                  ))
+                : videos.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="overflow-hidden rounded-xl border border-stone-200 bg-white shadow-sm"
+                    >
+                      <PlyrVideo src={item.file} />
+                      <div className="px-5 py-4">
+                        <h3 className="font-serif text-lg font-semibold text-stone-900">
+                          {item.name}
+                        </h3>
+                        <p className="mt-1 text-sm leading-relaxed text-stone-500">
+                          From our workshop — watch the craftsmanship behind
+                          each piece.
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── CTA ──────────────────────────────────────────────────────── */}
       <section className="border-t border-stone-200 bg-white px-6 py-20 text-center">
